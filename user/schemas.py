@@ -16,9 +16,6 @@ class UserResponse(UserBase):
     created_at: str
     updated_at: str
 
-    class Config:
-        from_attributes = True
-
     @staticmethod
     def format_datetime(value: datetime) -> str:
         return value.isoformat()

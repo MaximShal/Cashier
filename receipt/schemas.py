@@ -43,6 +43,7 @@ class ReceiptResponse(ReceiptBase):
     total: float
     rest: float
     created_at: datetime
+    link: str
 
     class Config:
         from_attributes = True

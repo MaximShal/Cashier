@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from core.auth import get_current_user
 from core.database import get_db
 from . import crud, schemas
+from .models import Receipt
 
 router = APIRouter()
 if TYPE_CHECKING:
@@ -23,10 +26,15 @@ async def create_receipt_route(
 @router.get("", response_model=schemas.ReceiptList)
 async def list_receipt_route(
         db: Session = Depends(get_db),
-        current_user: "User" = Depends(get_current_user)
+        current_user: "User" = Depends(get_current_user),
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        min_total: Optional[float] = None,
+        payment_type: Optional[schemas.PaymentTypeEnum] = None,
+        limit: Optional[int] = 10,
+        offset: Optional[int] = 0,
 ):
-    receipts = crud.list_receipt(db, current_user.id)
-    return receipts
+    return crud.list_receipt(db, current_user.id, start_date, end_date, min_total, payment_type, limit, offset)
 
 
 @router.get("/{receipt_id}", response_model=schemas.ReceiptResponse)
@@ -39,3 +47,18 @@ async def retrieve_receipt_route(
     if not receipt:
         raise HTTPException(status_code=404, detail="Receipt not found")
     return receipt
+
+
+@router.get("/view/{link_id}", response_class=PlainTextResponse)
+async def view_receipt(
+    link_id: str,
+    db: Session = Depends(get_db),
+    line_length: int = Query(32, ge=20, le=80, description="Receipt width")
+):
+    receipt = db.query(Receipt).filter(Receipt.link_id == link_id).first()
+
+    if not receipt:
+        raise HTTPException(status_code=404, detail="Receipt not found")
+
+    receipt_text = crud.generate_receipt_text(receipt, line_length)
+    return PlainTextResponse(receipt_text)
