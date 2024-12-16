@@ -18,7 +18,7 @@ async def login_for_access_token(user_data: schemas.LoginRequest, db: Session = 
 
 
 @router.get("", response_model=schemas.UserResponse)
-async def read_users_me(current_user: schemas.UserResponse = Depends(get_current_user)):
+async def read_user(current_user: schemas.UserResponse = Depends(get_current_user)):
     return schemas.UserResponse.from_orm(current_user)
 
 

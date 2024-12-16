@@ -7,6 +7,7 @@ from alembic import context
 
 from core.database import Base
 from core.config import settings
+from receipt.models import Receipt, Product
 from user.models import User
 
 # this is the Alembic Config object, which provides

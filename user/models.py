@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Integer, DateTime, Boolean
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from core.database import Base
 
@@ -13,6 +14,7 @@ class User(Base):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     disabled = Column(Boolean, default=False)
+    receipts = relationship("Receipt", back_populates="user")
 
     def __repr__(self):
         return f"<User(id={self.id}, name={self.name}, login={self.login})>"
