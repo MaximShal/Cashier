@@ -34,6 +34,12 @@ async def list_receipt_route(
         limit: Optional[int] = 10,
         offset: Optional[int] = 0,
 ):
+    current_date = datetime.utcnow().date()
+    if start_date and end_date:
+        if start_date > end_date:
+            raise HTTPException(status_code=400, detail="Start date cannot be later than end date.")
+        if start_date.date() > current_date or end_date.date() > current_date:
+            raise HTTPException(status_code=400, detail="Dates cannot be in the future.")
     return crud.list_receipt(db, current_user.id, start_date, end_date, min_total, payment_type, limit, offset)
 
 

@@ -152,3 +152,4 @@ cython_debug/
 
 #Project
 /alembic.ini
+/test.db

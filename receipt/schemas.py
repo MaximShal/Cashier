@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 
 
@@ -21,10 +21,8 @@ class ProductCreate(BaseModel):
 
 
 class ProductResponse(ProductCreate):
+    model_config = ConfigDict(from_attributes=True)
     total: float
-
-    class Config:
-        from_attributes = True
 
 
 class ReceiptBase(BaseModel):
@@ -37,6 +35,7 @@ class ReceiptCreate(ReceiptBase):
 
 
 class ReceiptResponse(ReceiptBase):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     products: List[ProductResponse]
     user_id: int
@@ -44,9 +43,6 @@ class ReceiptResponse(ReceiptBase):
     rest: float
     created_at: datetime
     link: str
-
-    class Config:
-        from_attributes = True
 
 
 class ReceiptList(BaseModel):
