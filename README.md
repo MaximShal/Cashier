@@ -11,6 +11,8 @@ For run the project:
 7. Run `uvicorn main:app --reload` in terminal.
 ***
 
+For testing run `PYTHONPATH=$(pwd) pytest tests/` in terminal.
+
 *Note:*
 
 If needed, you can provide database link in `project/alembic.ini` file by `sqlalchemy.url` param.
